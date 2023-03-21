@@ -1,0 +1,195 @@
+﻿@page "/findflights"
+@using TravelLess_App.Data;
+<div>
+	<div class="row"><h3 style="text-align:center">Flight Finder</h3></div>
+	<div class="row g-3">
+		<div class="col-4">From:</div>
+		<div class="col-4">To:</div>
+		<div class="col-4">Date:</div>
+	</div>
+	<div class="row  g-3">
+		<div class="col-4">
+			<select @onchange="select" class="form-select" aria-label="Default select example" >
+				<option>From</option>
+				@foreach(var a in airports)
+				{
+					<option value="@a.Code">@a.AirportName</option>
+				}
+			</select>
+		</div>
+		<div class="col-4">
+			<select class="form-select" aria-label="Default select example" @onchange="selectA">
+				<option>To</option>
+				@foreach (var a in airports)
+				{
+					<option value="@a.Code">@a.AirportName</option>
+				} 
+			</select>
+		</div>
+		<div class="col-4 ">
+			<select class="form-select" aria-label="Default select example" @onchange="selectB">
+				<option value="">Day</option>
+				<option value="Monday">Monday</option>
+				<option value="Tuesday">Tuesday</option>
+				<option value="Wednesday">Wednesday</option>
+				<option value="Thursday">Thursday</option>
+				<option value="Friday">Friday</option>
+				<option value="Saturday">Saturday</option>
+				<option value="Sunday">Sunday</option>
+			</select>
+		</div>
+		<div class="row mt-3">
+			<div>
+				
+				<div class="col-6">
+					<button type="button" class="btn btn-primary" @onclick="fetchdata">Find Flights</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row mt-5"><h3 style="text-align:center">Flights</h3></div>
+	<div class="row g-3">
+		<div class="col-sm mb-3">
+			<input type="text" class="form-control" id="flights" placeholder="Loading..." value="@message">
+		</div>
+	</div>
+	<div class="row mt-5"><h3 style="text-align:center">Reserve</h3></div>
+	<div class="row  g-3">
+		<div class="col-4">Flight Code:</div>
+		<div class="col-4">Airline:</div>
+		<div class="col-4">Day:</div>
+	</div>
+	<div class="row">
+		<div class="col-4">
+			<input type="text" class="form-control" id="flights" placeholder="Flight" disabled value="@flightCode">
+		</div>
+		<div class="col-4">
+			<input type="text" class="form-control" id="flights" placeholder="Airline" disabled value="@airlineName">
+		</div>
+		<div class="col-4">
+			<input type="text" class="form-control" id="flights" placeholder="Day" disabled value="@dayOfFlight">
+		</div>
+	</div>
+	<div class="row mt-3  g-3">
+		
+		<div class="col-6">Time:</div>
+		<div class="col-6">Cost:</div>
+	</div>
+	<div class="row">
+		
+		<div class="col-6">
+			<input type="text" class="form-control" id="flights" placeholder="Time" disabled value="@timeOfFlight">
+		</div>
+		<div class="col-6">
+			<input type="text" class="form-control" id="flights" placeholder="Cost" disabled value="@costOfFlight">
+		</div>
+	</div>
+	<div class="row mt-3  g-3">
+		<div class="col-6">Name:</div>
+		<div class="col-6">Citizenship:</div>
+	</div>
+	<div class="row">
+		<div class="col-6">
+			<input type="text" class="form-control" id="flights" placeholder="Name">
+		</div>
+		<div class="col-6">
+			<input type="text" class="form-control" id="flights" placeholder="Citizenship">
+		</div>
+	</div>
+	<div class="row mt-4">
+		<div class="col-5"></div>
+		<div class="col-5"><button type="button" class="btn btn-dark" style="width:15em">Reserve</button></div>
+	</div>
+	<div class="row mt-2">
+		<div class="col-5"></div>
+		<div class="col-5"><div><p>Reservation Code:</p><span></span></div></div>
+	</div>
+
+</div>
+@code {
+	DriverAirport dA=new DriverAirport();
+	List<Airports> airports = DriverAirport.GetAirports();
+	DriverFlight dF = new DriverFlight();
+	List<Flights> flights = DriverFlight.GetFlights();
+	string opt;
+	string optA;
+	string optB;
+	string message;
+	string flightCode;
+	string airlineName;
+	string dayOfFlight;
+	string timeOfFlight;
+	string costOfFlight;
+	string fullName;
+	string citizenship;
+	string reservationCode;
+	bool status = true;
+	bool check;
+	private void select(ChangeEventArgs e)
+	{
+		opt = e.Value.ToString();
+	}
+	private void selectA(ChangeEventArgs e)
+	{
+		optA = e.Value.ToString();
+	}
+	private void selectB(ChangeEventArgs e)
+	{
+		optB = e.Value.ToString();
+	}
+	private void fetchdata()
+	{
+		check = false;
+		foreach (var f in flights)
+		{
+			if (opt == f.DepartAirport && optA == f.ArriveAirport && optB == f.Day)
+			{
+				message = f.FlightNumber + ", " + f.FlightName + ", " + f.DepartAirport+ ", " + f.ArriveAirport+ ", " + f.Day + ", " + f.Time + ", " + f.Cost;
+				flightCode = f.FlightNumber;
+				airlineName = f.FlightName;
+				dayOfFlight = f.Day;
+				timeOfFlight = f.Time;
+				costOfFlight = f.Cost;
+				check = true;
+			}
+		}
+		if (check == false)
+		{
+			message = "Loading...";
+			flightCode = "Flight";
+			airlineName = "Airline";
+			dayOfFlight = "Day";
+			timeOfFlight = "Time";
+			costOfFlight = "Cost";
+		}
+	}
+	private void NameofPass(ChangeEventArgs e)
+	{
+		fullName = e.Value.ToString();
+	}
+	private void citizenshipStatus(ChangeEventArgs e)
+	{
+		citizenship = e.Value.ToString();
+	}
+
+	private void reserve()
+	{
+		Random random = new Random();
+		const string letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		const string digits = "0123456789";
+
+		reservationCode = letters[random.Next(letters.Length)].ToString();
+		for (int i = 0; i < 4; i++)
+		{
+			reservationCode += digits[random.Next(digits.Length)];
+		}
+
+		string path = @"D:\SAIT\SEM 2\TravelLess_App\TravelLess_App\TravelLess_App\TravelLess_App\Files\reservations.csv";
+		List<string> dataToSave = new List<string>() { reservationCode, flightCode, airlineName, costOfFlight.ToString(), fullName, citizenship, status.ToString() };
+		string formattedDataToSave = string.Join(";", dataToSave);
+		File.AppendAllText(path, formattedDataToSave + Environment.NewLine);
+
+	}
+
+	
+}
